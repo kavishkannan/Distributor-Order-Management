@@ -6,8 +6,14 @@ const Port = Number(process.env.PORT) || 4000;
 const MaxRetryAttempts = Number(process.env.ERP_MAX_RETRY_ATTEMPTS) || 5;
 const RetryBaseDelayMs = Number(process.env.ERP_RETRY_BASE_DELAY_MS) || 60_000;
 
-if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET must be set when NODE_ENV=production");
+const ExampleJwtSecret = "change-me-in-production";
+const JwtSecret = process.env.JWT_SECRET;
+
+if (!JwtSecret) {
+  throw new Error("JWT_SECRET must be set (see backend/.env.example)");
+}
+if (process.env.NODE_ENV === "production" && JwtSecret === ExampleJwtSecret) {
+  throw new Error("JWT_SECRET must not be the example value in production");
 }
 
 export const env = {
@@ -26,7 +32,7 @@ export const env = {
       ),
   erpRetryPollIntervalMs:
     Number(process.env.ERP_RETRY_POLL_INTERVAL_MS) || 30_000,
-  jwtSecret: process.env.JWT_SECRET || "dev-secret-change-me",
+  jwtSecret: JwtSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
   logLevel: process.env.LOG_LEVEL || "info",
 };

@@ -64,7 +64,7 @@ Windows PowerShell 5.1 and `cmd` don't support the `&&`/`cp` in step 2:
 | --- | --- | --- |
 | `PORT` | Backend HTTP port | `4000` |
 | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | MySQL connection | `localhost`, `3306`, `root`, `root`, `metayb` in the example file |
-| `JWT_SECRET`, `JWT_EXPIRES_IN` | Signing key and lifetime of sign-in tokens; the backend refuses to start with `NODE_ENV=production` and no `JWT_SECRET` | example: `change-me-in-production`, `1d` |
+| `JWT_SECRET`, `JWT_EXPIRES_IN` | Signing key and lifetime of sign-in tokens; the backend refuses to start without `JWT_SECRET`, or with the example value when `NODE_ENV=production` | example: `change-me-in-production`, `1d` |
 | `ERP_ENDPOINT_URL` | Where order status events are POSTed | `http://localhost:4000/mockerp` (built-in stand-in) |
 | `ERP_WEBHOOK_TIMEOUT_MS` | Per-attempt delivery timeout | `5000` |
 | `ERP_MAX_RETRY_ATTEMPTS` | Delivery attempts before an event stays `Failed` | `5` |

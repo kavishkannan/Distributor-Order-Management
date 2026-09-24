@@ -342,6 +342,16 @@ async function main(): Promise<void> {
         BadJson.data.message === "Malformed JSON in request body",
       "malformed JSON -> 400",
     );
+    const TooLarge = await Http.post(
+      `${Base}/order/placeorder`,
+      { lineItems: [], padding: "x".repeat(200_000) },
+      auth(TokenA),
+    );
+    check(
+      TooLarge.status === 413 && typeof TooLarge.data.message === "string",
+      "oversized body -> 413 JSON, not 500",
+      TooLarge.data,
+    );
     const NoRoute = await Http.get(`${Base}/does-not-exist`);
     check(
       NoRoute.status === 404 && NoRoute.data.message === "Route not found",

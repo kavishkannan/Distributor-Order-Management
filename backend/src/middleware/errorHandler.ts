@@ -10,6 +10,19 @@ function isMalformedJsonError(Err: unknown): boolean {
   );
 }
 
+function clientErrorStatus(Err: unknown): number | null {
+  const { status: Status, expose: Expose } = (Err ?? {}) as {
+    status?: unknown;
+    expose?: unknown;
+  };
+  return typeof Status === "number" &&
+    Status >= 400 &&
+    Status < 500 &&
+    Expose === true
+    ? Status
+    : null;
+}
+
 export function errorHandler(
   Err: unknown,
   Req: Request,
@@ -24,6 +37,16 @@ export function errorHandler(
   if (isMalformedJsonError(Err)) {
     logger.warn("Malformed JSON request body", { ...Context, statusCode: 400 });
     Res.status(400).json({ message: "Malformed JSON in request body" });
+    return;
+  }
+  const ClientStatus = clientErrorStatus(Err);
+  if (ClientStatus !== null) {
+    logger.warn("Rejected request body", {
+      ...Context,
+      statusCode: ClientStatus,
+      error: (Err as Error).message,
+    });
+    Res.status(ClientStatus).json({ message: (Err as Error).message });
     return;
   }
   logger.error("Unhandled error", {
